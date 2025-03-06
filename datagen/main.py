@@ -16,15 +16,13 @@ class Counter:
             with open(OUTPATH, "a", encoding="utf-8", newline="") as f:
                 writer = csv.writer(f, quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 for document in documents:
-                    # chunk_tokens をスペースで結合して文字列に変換
-                    chunk_tokens_str = ' '.join(document.chunk_tokens)
                     
                     writer.writerow([
-                        document.id, document.url, document.timestamp, document.document_path,
+                        document.id, document.chunk_id, document.url, document.timestamp, document.document_path,
                         document.caption_text.replace('\n', ' ').replace('\r', ' '), 
                         document.caption_tokens, document.caption_embedding,
                         document.chunk_text.replace('\n', ' ').replace('\r', ' '), 
-                        chunk_tokens_str, document.chunk_embedding, document.all_text.replace('\n', ' ').replace('\r', ' ')
+                        document.chunk_tokens, document.chunk_embedding, document.all_text.replace('\n', ' ').replace('\r', ' ')
                     ])
                 
                     # 書き込みが確実にディスクに反映されるようにフラッシュする
