@@ -6,6 +6,7 @@ from modules.document import get_documents_by_path, list_txt_files, Document
 import csv
 
 OUTPATH = 'output.csv'
+SEED = 42
 
 class Counter:
     lock = Lock()
@@ -46,7 +47,9 @@ def main():
     
     # ファイルリストを平坦化し、ランダムに4%を選定
     file_list = [file for sublist in nested_txt_files for file in sublist]
-    sample_size = max(1, int(len(file_list) * 0.03))
+    sample_size = max(1, int(len(file_list) * 0.04))
+    # randomのシード値を設定
+    random.seed(SEED)
     
     sampled_file_list = random.sample(file_list, sample_size)
     
