@@ -1,0 +1,1 @@
+SELECT chunk_text FROM mame_db.vector_sample

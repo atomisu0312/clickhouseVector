@@ -1,0 +1,1 @@
+curl 'http://localhost:18123/?password=changeme' --data-binary @query/X1_check_chunk.sql

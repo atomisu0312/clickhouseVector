@@ -1,0 +1,1 @@
+DELETE FROM mame_db.vector_sample WHERE true;
