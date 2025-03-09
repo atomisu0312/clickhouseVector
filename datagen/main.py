@@ -4,8 +4,10 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
 from modules.document import get_documents_by_path, list_txt_files, Document
 import csv
+import gzip
+import shutil
 
-OUTPATH = 'output.csv'
+OUT_CSV_PATH = 'output.csv'
 SEED = 42
 
 class Counter:
@@ -14,7 +16,7 @@ class Counter:
     def process_file(self, file_path):
         documents = get_documents_by_path(file_path)
         with self.lock:
-            with open(OUTPATH, "a", encoding="utf-8", newline="") as f:
+            with open(OUT_CSV_PATH, "a", encoding="utf-8", newline="") as f:
                 writer = csv.writer(f, quotechar='"', quoting=csv.QUOTE_MINIMAL)
                 for document in documents:
                     
@@ -47,17 +49,15 @@ def main():
     
     # ファイルリストを平坦化し、ランダムに4%を選定
     file_list = [file for sublist in nested_txt_files for file in sublist]
-    sample_size = max(1, int(len(file_list) * 0.04))
+    sample_size = max(1, int(len(file_list) * 0.06))
     # randomのシード値を設定
     random.seed(SEED)
     
     sampled_file_list = random.sample(file_list, sample_size)
     
-    print(f"Number of files: {len(sampled_file_list)}")
-    
     # 出力ファイルが存在する場合は削除
-    if os.path.exists(OUTPATH):
-        os.remove(OUTPATH)
+    if os.path.exists(OUT_CSV_PATH):
+        os.remove(OUT_CSV_PATH)
     
     # スレッド数を定義
     num_threads = 4
@@ -72,6 +72,10 @@ def main():
         # スレッドをプールに提出
         futures = [executor.submit(worker, counter, chunks[i]) for i in range(num_threads)]
     
+    with open(OUT_CSV_PATH, 'rb') as f_in:
+        with gzip.open(f"{OUT_CSV_PATH}.gz", 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+            
     print("All threads have finished.")
 
 if __name__ == "__main__":

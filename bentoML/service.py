@@ -1,6 +1,8 @@
 from __future__ import annotations
 import bentoml
 
+import modules.nlp_model as nlp_model
+
 with bentoml.importing():
     from transformers import pipeline
 
@@ -36,3 +38,11 @@ class Summarization:
     def summarize(self, text: str = EXAMPLE_INPUT) -> str:
         result = self.pipeline(text)
         return f"Hello world! Here's your summary: {result[0]['summary_text']}"
+    
+    @bentoml.api
+    def tokenize(self, text: str = EXAMPLE_INPUT) -> list:
+        return nlp_model.tokenize_text(text)
+    
+    @bentoml.api
+    def get_embeddings(self, text: str = EXAMPLE_INPUT) -> list:
+        return nlp_model.get_embeddings(text).tolist()
