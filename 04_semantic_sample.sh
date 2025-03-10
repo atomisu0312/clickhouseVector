@@ -1,6 +1,15 @@
 #!/bin/bash
-TEST_A=$1
+INPUT=$1
 
-cat ./query/05_select_string_sample.sql | 
-  sed "s/__VAR__/${TEST_A}/" |
+tokens=$(curl -s -X 'POST' \
+    "http://localhost:13000/get_embeddings" \
+    -H "accept: text/plain" \
+    -H "Content-Type: application/json" \
+    -d "{
+    \"text\": \"${INPUT}\"
+}")
+
+
+cat ./query/08_select_semtantic_template.sql | 
+  sed "s/__VAR__/${tokens}/" |
   curl 'http://localhost:18123/?password=changeme' --data-binary @-
